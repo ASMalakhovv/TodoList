@@ -31,7 +31,7 @@ export const AddItemForm = React.memo ((props: AddItemFormPropsType)=> {
                    setTitle={setTitle}
                    setError={setError}
 
-            /> !
+            />
             <IconButton onClick={onClickHandler}
             color={'primary'}
             ><Add/></IconButton>
