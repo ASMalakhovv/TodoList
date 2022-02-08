@@ -11,7 +11,7 @@ export type ActionsType =
     | ReturnType<typeof removeTodoListAC>
 
 let initialState: TasksType = {
-    ['1']: [
+/*    ['1']: [
         {id: v1(), title: "HTML&CSS", isDone: true},
         {id: v1(), title: "JS", isDone: true},
         {id: v1(), title: "ReactJS", isDone: false},
@@ -24,7 +24,7 @@ let initialState: TasksType = {
         {id: v1(), title: "ReactJS2", isDone: false},
         {id: v1(), title: "Rest API2", isDone: false},
         {id: v1(), title: "GraphQL2", isDone: false}
-    ],
+    ],*/
 }
 
 export function tasksReducer(state: TasksType = initialState, action: ActionsType): TasksType {

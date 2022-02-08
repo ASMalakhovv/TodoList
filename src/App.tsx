@@ -13,7 +13,7 @@ import {
     changeTodoListTitleAC,
     removeTodoListAC
 } from "./state/todolists-reducer";
-import {addTasksAC, changeStatusTasksAC, removeTasksAC, updateTasksAC} from "./state/tasks-reducer";
+
 
 
 export type FilterValuesType = 'all' | 'active' | 'completed'

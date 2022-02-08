@@ -25,8 +25,8 @@ export type ChangeTodoListFilter = {
     filter: FilterValuesType
 };
 let initialState: Array<TodoListsType> = [
-    {id: '1', title: "What to learn", filter: "all"},
-    {id: '2', title: "What to buy", filter: "all"}
+/*    {id: '1', title: "What to learn", filter: "all"},
+    {id: '2', title: "What to buy", filter: "all"}*/
 ]
 
 
