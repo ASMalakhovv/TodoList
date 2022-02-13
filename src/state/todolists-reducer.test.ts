@@ -6,19 +6,19 @@ import {
     todoListsReducer
 } from "./todolists-reducer";
 import {v1} from "uuid";
-import {FilterValuesType, TodoListsType} from "../App";
+import {FilterValuesType, TodoListsDomainType} from "../App";
 
 
 test.skip('user reducer should increment only age', () => {
     let todolistID1 = v1();
     let todolistID2 = v1();
-    const todoLists: Array<TodoListsType> = [
-        {id: todolistID1, title: "What to learn", filter: "all"},
-        {id: todolistID2, title: "What to buy", filter: "all"}
+    const todoLists: Array<TodoListsDomainType> = [
+        {id: todolistID1, title: "What to learn", filter: "all", addedDate: '', order: 0},
+        {id: todolistID2, title: "What to buy", filter: "all", addedDate: '', order: 0}
     ]
 
 
-    const endState = todoListsReducer(todoLists,removeTodoListAC(todolistID1) )
+    const endState = todoListsReducer(todoLists, removeTodoListAC(todolistID1))
 
 
     expect(endState.length).toBe(1)
@@ -26,14 +26,12 @@ test.skip('user reducer should increment only age', () => {
 });
 
 
-
-
 test.skip('user reducer should add to do list', () => {
     let todolistID1 = v1();
     let todolistID2 = v1();
-    const todoLists: Array<TodoListsType> = [
-        {id: todolistID1, title: "What to learn", filter: "all"},
-        {id: todolistID2, title: "What to buy", filter: "all"}
+    const todoLists: Array<TodoListsDomainType> = [
+        {id: todolistID1, title: "What to learn", filter: "all", addedDate: '', order: 0},
+        {id: todolistID2, title: "What to buy", filter: "all", addedDate: '', order: 0}
     ]
 
 
@@ -47,17 +45,15 @@ test.skip('user reducer should add to do list', () => {
 });
 
 
-
 test.skip('user reducer should change to do list title', () => {
     let todolistID1 = v1();
     let todolistID2 = v1();
-    const todoLists: Array<TodoListsType> = [
-        {id: todolistID1, title: "What to learn", filter: "all"},
-        {id: todolistID2, title: "What to buy", filter: "all"}
+    const todoLists: Array<TodoListsDomainType> = [
+        {id: todolistID1, title: "What to learn", filter: "all", addedDate: '', order: 0},
+        {id: todolistID2, title: "What to buy", filter: "all", addedDate: '', order: 0}
     ]
     let newTitle = "New Title"
-    let action = changeTodoListTitleAC(todolistID1,newTitle)
-
+    let action = changeTodoListTitleAC(todolistID1, newTitle)
 
 
     const endState = todoListsReducer(todoLists, action)
@@ -71,12 +67,12 @@ test.skip('user reducer should change to do list title', () => {
 test.skip('user reducer should change to do list filter', () => {
     let todolistID1 = v1();
     let todolistID2 = v1();
-    const todoLists: Array<TodoListsType> = [
-        {id: todolistID1, title: "What to learn", filter: "all"},
-        {id: todolistID2, title: "What to buy", filter: "all"}
+    const todoLists: Array<TodoListsDomainType> = [
+        {id: todolistID1, title: "What to learn", filter: "all", addedDate: '', order: 0},
+        {id: todolistID2, title: "What to buy", filter: "all", addedDate: '', order: 0}
     ]
-    let filter:FilterValuesType = "completed"
-    let action = changeTodoListFilterAC(todolistID1,"completed")
+    let filter: FilterValuesType = "completed"
+    let action = changeTodoListFilterAC(todolistID1, "completed")
 
 
     const endState = todoListsReducer(todoLists, action)

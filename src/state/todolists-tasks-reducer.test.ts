@@ -1,11 +1,12 @@
-import {TasksType, TodoListsType} from "../App";
+import {TasksType} from "../App";
 import {v1} from "uuid";
-import {addTodoListAC, removeTodoListAC, todoListsReducer} from "./todolists-reducer";
+import {addTodoListAC, removeTodoListAC, TodolistDomainType, todoListsReducer} from "./todolists-reducer";
 import {tasksReducer} from "./tasks-reducer";
+import {TaskPriorities, TaskStatuses} from "../api/todolist-api";
 
 test('ids should be equals', () => {
     const tasks: TasksType = {};
-    const todoLists: Array<TodoListsType> = []
+    const todoLists: Array<TodolistDomainType> = []
 
     const action = addTodoListAC("new todolist");
 
@@ -25,18 +26,48 @@ test('property with todolistId should be deleted', () => {
     const todolistID2 = v1()
     let tasks: TasksType = {
         [todolistID1]: [
-            {id: '1', title: "HTML&CSS", isDone: true},
-            {id: '2', title: "JS", isDone: true},
-            {id: '3', title: "ReactJS", isDone: false},
-            {id: '4', title: "Rest API", isDone: false},
-            {id: '5', title: "GraphQL", isDone: false}
+            {
+                id: '1', title: "HTML&CSS", status: TaskStatuses.Completed, startDate: '', addedDate: '', order: 0,
+                priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID1
+            },
+            {
+                id: '2', title: "JS", status: TaskStatuses.Completed, startDate: '', addedDate: '', order: 0,
+                priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID1
+            },
+            {
+                id: '3', title: "ReactJS", status: TaskStatuses.New, startDate: '', addedDate: '', order: 0,
+                priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID1
+            },
+            {
+                id: '4', title: "Rest API", status: TaskStatuses.New, startDate: '', addedDate: '', order: 0,
+                priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID1
+            },
+            {
+                id: '5', title: "GraphQL", status: TaskStatuses.New, startDate: '', addedDate: '', order: 0,
+                priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID1
+            }
         ],
         [todolistID2]: [
-            {id: '1', title: "HTML&CSS2", isDone: true},
-            {id: '2', title: "JS2", isDone: true},
-            {id: '3', title: "ReactJS2", isDone: false},
-            {id: '4', title: "Rest API2", isDone: false},
-            {id: '5', title: "GraphQL2", isDone: false}
+            {
+                id: '1', title: "HTML&CSS2", status: TaskStatuses.Completed, startDate: '', addedDate: '', order: 0,
+                priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID2
+            },
+            {
+                id: '2', title: "JS2", status: TaskStatuses.Completed, startDate: '', addedDate: '', order: 0,
+                priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID2
+            },
+            {
+                id: '3', title: "ReactJS2", status: TaskStatuses.New, startDate: '', addedDate: '', order: 0,
+                priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID2
+            },
+            {
+                id: '4', title: "Rest API2", status: TaskStatuses.New, startDate: '', addedDate: '', order: 0,
+                priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID2
+            },
+            {
+                id: '5', title: "GraphQL2", status: TaskStatuses.New, startDate: '', addedDate: '', order: 0,
+                priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID2
+            }
         ]
     };
 

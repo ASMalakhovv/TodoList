@@ -1,5 +1,5 @@
-import React, {useCallback} from 'react';
-import {FilterValuesType, TaskType,} from "./App";
+import React, {useCallback, useEffect} from 'react';
+import {FilterValuesType} from "./App";
 import {AddItemForm} from "./components/AddItemForm";
 import {EditElementSpan} from "./components/EditElementSpan/EditElementSpan";
 import {ButtonMy} from "./components/Button/ButtonMy";
@@ -9,6 +9,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "./redux/store";
 import {addTasksAC} from "./state/tasks-reducer";
 import {Task} from "./Task/Task";
+import {TaskStatuses, TaskType} from "./api/todolist-api";
 
 
 type TodoListPropsType = {
@@ -22,16 +23,23 @@ type TodoListPropsType = {
 
 const TodoListWithReducer = React.memo((props: TodoListPropsType) => {
     console.log('TodoList')
+
+    useEffect(() => {
+
+    }, [])
+
+
+
     let tasksForTodolist = useSelector<StateType, Array<TaskType>>(state => state.tasks[props.todoListID])
     const dispatch = useDispatch()
 
 
     if (props.filter === 'active') {
-        tasksForTodolist = tasksForTodolist.filter(t => !t.isDone)
+        tasksForTodolist = tasksForTodolist.filter(t => t.status === TaskStatuses.New)
     }
 
     if (props.filter === 'completed') {
-        tasksForTodolist = tasksForTodolist.filter(t => t.isDone)
+        tasksForTodolist = tasksForTodolist.filter(t => t.status === TaskStatuses.Completed)
     }
 
     const tasksJSXElements = tasksForTodolist.map(t => <Task task={t} todoListID={props.todoListID}/>)
@@ -59,27 +67,27 @@ const TodoListWithReducer = React.memo((props: TodoListPropsType) => {
 
     return (
         <div className="App" key={props.todoListID}>
-                <div>
-                    <EditElementSpan title={props.title} callback={updateTodoListHandler}/>
-                    <IconButton onClick={onClickHandlerForRemoveTodolist} name="delete"><Delete/> </IconButton>
-                </div>
-                <AddItemForm callback={callback}/>
-                <List>
-                    {tasksJSXElements}
-                </List>
-                <div>
+            <div>
+                <EditElementSpan title={props.title} callback={updateTodoListHandler}/>
+                <IconButton onClick={onClickHandlerForRemoveTodolist} name="delete"><Delete/> </IconButton>
+            </div>
+            <AddItemForm callback={callback}/>
+            <List>
+                {tasksJSXElements}
+            </List>
+            <div>
 
-                    <ButtonMy callback={() => {
-                        tsarFoo(props.todoListID, "all")
-                    }} name={"all"} filter={props.filter}/>
-                    <ButtonMy callback={() => {
-                        tsarFoo(props.todoListID, "active")
-                    }} name={"active"} filter={props.filter}/>
-                    <ButtonMy callback={() => {
-                        tsarFoo(props.todoListID, "completed")
-                    }} name={"completed"} filter={props.filter}/>
+                <ButtonMy callback={() => {
+                    tsarFoo(props.todoListID, "all")
+                }} name={"all"} filter={props.filter}/>
+                <ButtonMy callback={() => {
+                    tsarFoo(props.todoListID, "active")
+                }} name={"active"} filter={props.filter}/>
+                <ButtonMy callback={() => {
+                    tsarFoo(props.todoListID, "completed")
+                }} name={"completed"} filter={props.filter}/>
 
-                </div>
+            </div>
         </div>
     )
 })

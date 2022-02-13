@@ -4,7 +4,7 @@ import React, {ChangeEvent, useCallback} from "react";
 import {Checkbox, IconButton, ListItem} from "@material-ui/core";
 import {EditElementSpan} from "../components/EditElementSpan/EditElementSpan";
 import {Delete} from "@material-ui/icons";
-import {TaskType} from "../App";
+import {TaskStatuses, TaskType} from "../api/todolist-api";
 
 type TaskPropsType = {
     todoListID: string
@@ -20,7 +20,8 @@ export const Task = React.memo((props: TaskPropsType) => {
     }, [dispatch, props.todoListID, props.task.id])
 
     const onChangeHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        dispatch(changeStatusTasksAC(props.todoListID, props.task.id, e.currentTarget.checked))
+        let status = e.currentTarget.checked ? TaskStatuses.Completed : TaskStatuses.New
+        dispatch(changeStatusTasksAC(props.todoListID, props.task.id, status))
     }, [dispatch, props.todoListID, props.task.id])
 
     const updateTaskHandler = useCallback((title: string) => {
@@ -30,11 +31,11 @@ export const Task = React.memo((props: TaskPropsType) => {
     return (
         <ListItem key={props.task.id}>
             <div className={props.task
-                .isDone ? "isDone" : ""}
+                .status === TaskStatuses.Completed ? "isDone" : ""}
                  style={{display: 'inline'}}>
                 <Checkbox
                     checked={props.task
-                        .isDone}
+                        .status === TaskStatuses.Completed}
                     color="primary"
                     inputProps={{'aria-label': 'secondary checkbox'}}
                     onChange={onChangeHandler}

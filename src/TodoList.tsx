@@ -1,27 +1,23 @@
 import React, {ChangeEvent} from 'react';
-import {FilterValuesType, TasksType, TaskType, TodoListsType} from "./App";
+import {FilterValuesType, TasksType} from "./App";
 import {AddItemForm} from "./components/AddItemForm";
 import {EditElementSpan} from "./components/EditElementSpan/EditElementSpan";
 import {ButtonMy} from "./components/Button/ButtonMy";
-import {Checkbox, List, ListItem, IconButton} from "@material-ui/core";
+import {Checkbox, IconButton, List, ListItem} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "./redux/store";
 import {changeTodoListFilterAC} from "./state/todolists-reducer";
 import {addTasksAC, changeStatusTasksAC, removeTasksAC, updateTasksAC} from "./state/tasks-reducer";
+import {TaskStatuses} from "./api/todolist-api";
 
 
 type TodoListPropsType = {
     title: string
-    //tasks: Array<TaskType>
-    //removeTasks: (todoListID: string, tasksID: string) => void
-    // addTasks: (todoListID: string, title: string) => void
-    // changeStatusTask: (todoListID: string, taskID: string, isDone: boolean) => void
     changeFilter: (todolistID: string, value: FilterValuesType) => void
     filter: FilterValuesType
     todoListID: string
     removeTodolist: (todoListID: string) => void
-    //updateTask: (todoListID: string, taskID: string, title: string) => void
     updateTodoList: (todoListID: string, title: string) => void
 }
 
@@ -30,28 +26,27 @@ function TodoList(props: TodoListPropsType) {
     let dispatch = useDispatch();
     let tasksForTodolist = tasks[props.todoListID]
     if (props.filter === 'active') {
-        tasksForTodolist = tasksForTodolist.filter(t => t.isDone === false)
+        tasksForTodolist = tasksForTodolist.filter(t => t.status === TaskStatuses.New)
     }
 
     if (props.filter === 'completed') {
-        tasksForTodolist = tasksForTodolist.filter(t => t.isDone === true)
+        tasksForTodolist = tasksForTodolist.filter(t => t.status === TaskStatuses.Completed)
     }
 
     const tasksJSXElements = tasksForTodolist.map(t => {
         const onClickMap = () => {
             dispatch(removeTasksAC(props.todoListID, t.id))
-            //removeTasks(props.todoListID, t.id)
         }
         const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-            dispatch(changeStatusTasksAC(props.todoListID, t.id, e.currentTarget.checked))
-            //props.changeStatusTask(props.todoListID, t.id, e.currentTarget.checked)
+            let status = e.currentTarget.checked ? TaskStatuses.Completed : TaskStatuses.New
+            dispatch(changeStatusTasksAC(props.todoListID, t.id, status))
         }
         return (
             <ListItem key={t.id}>
-                <div className={t.isDone ? "isDone" : ""}
+                <div className={t.status === TaskStatuses.Completed ? "isDone" : ""}
                      style={{display: 'inline'}}>
                     <Checkbox
-                        checked={t.isDone}
+                        checked={t.status === TaskStatuses.Completed}
                         color="primary"
                         inputProps={{'aria-label': 'secondary checkbox'}}
                         onChange={onChangeHandler}
