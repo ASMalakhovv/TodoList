@@ -1,12 +1,12 @@
 import {
     addTodoListAC,
-    changeTodoListFilterAC,
     changeTodoListTitleAC,
-    removeTodoListAC,
+    removeTodoListAC, setTodo,
     todoListsReducer
 } from "./todolists-reducer";
 import {v1} from "uuid";
-import {FilterValuesType, TodoListsDomainType} from "../App";
+import {TodoListsDomainType} from "../App";
+import {TodolistType} from "../api/todolist-api";
 
 
 test.skip('user reducer should increment only age', () => {
@@ -64,20 +64,23 @@ test.skip('user reducer should change to do list title', () => {
 });
 
 
-test.skip('user reducer should change to do list filter', () => {
+test('todoLists reducer must install todoLists', () => {
     let todolistID1 = v1();
     let todolistID2 = v1();
     const todoLists: Array<TodoListsDomainType> = [
         {id: todolistID1, title: "What to learn", filter: "all", addedDate: '', order: 0},
         {id: todolistID2, title: "What to buy", filter: "all", addedDate: '', order: 0}
     ]
-    let filter: FilterValuesType = "completed"
-    let action = changeTodoListFilterAC(todolistID1, "completed")
+    const newTodoLists: Array<TodolistType> = [
+        {id: '1', title: "What to learn", addedDate: '', order: 0}
+    ]
+
+    let action = setTodo(newTodoLists)
 
 
     const endState = todoListsReducer(todoLists, action)
 
 
-    expect(endState.length).toBe(2)
-    expect(endState[0].filter).toBe("completed")
+    expect(endState.length).toBe(3)
+    expect(endState[2].id).toBe("1")
 });

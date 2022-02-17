@@ -46,7 +46,11 @@ let initialState: Array<TodolistDomainType> = [
 export function todoListsReducer(state: Array<TodolistDomainType> = initialState, action: ActionsType): Array<TodolistDomainType> {
     switch (action.type) {
         case "SET-TODOLIST":
-            return action.todolist.map(e => ({...e, filter: 'all'}))
+            let setTodoList:Array<TodolistDomainType> = action.todolist.map(e => ({...e, filter: 'all'}))
+            return [
+                ...state,
+                ...setTodoList,
+            ]
         case 'REMOVE-TODOLIST':
             return state.filter(s => s.id !== action.id);
         case 'ADD-TODOLIST':

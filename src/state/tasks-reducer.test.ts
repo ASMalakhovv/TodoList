@@ -1,8 +1,8 @@
 import {v1} from "uuid";
-import {addTasksAC, changeStatusTasksAC, removeTasksAC, tasksReducer, updateTasksAC} from "./tasks-reducer";
+import {addTasksAC, changeStatusTasksAC, removeTasksAC, setTasksAC, tasksReducer, updateTasksAC} from "./tasks-reducer";
 import {addTodoListAC} from "./todolists-reducer";
 import {TasksType} from "../App";
-import {TaskPriorities, TaskStatuses} from "../api/todolist-api";
+import {TaskPriorities, TaskStatuses, TaskType} from "../api/todolist-api";
 
 
 test("user reducer should only change the name of the task", () => {
@@ -179,9 +179,14 @@ test("user reducer should only add the task", () => {
         ]
     };
     let title = 'New task';
+    let task = {
+        id: '1', title, status: TaskStatuses.New, startDate: '', addedDate: '', order: 0,
+        priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID1
+    }
 
 
-    let newTasks: TasksType = tasksReducer(tasks, addTasksAC(todolistID1, title))
+
+    let newTasks: TasksType = tasksReducer(tasks, addTasksAC(task))
 
     expect(newTasks[todolistID1].length).toBe(6)
     expect(newTasks[todolistID1][0].title).toBe(title)
@@ -240,11 +245,15 @@ test("user reducer should only change the status of the task", () => {
             }
         ]
     };
+    let task = {
+        id: '1', title: "HTML&CSS", status: TaskStatuses.New, startDate: '', addedDate: '', order: 0,
+        priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID1
+    }
     let id = '1';
-    let status :TaskStatuses = TaskStatuses.New;
+    let status: TaskStatuses = TaskStatuses.New;
 
 
-    let newTasks: TasksType = tasksReducer(tasks, changeStatusTasksAC(todolistID1, id, status))
+    let newTasks: TasksType = tasksReducer(tasks, changeStatusTasksAC(task))
     let example = newTasks[todolistID1].find(t => t.id === id)
 
     // @ts-ignore
@@ -319,3 +328,42 @@ test('new array should be added when new todolist is added', () => {
     expect(endState[newKey]).toEqual([]);
 })
 
+
+test('should set tasks', () => {
+    const todolistID1 = v1()
+    let tasks: TaskType[] = [
+        {
+            id: '1', title: "HTML&CSS", status: TaskStatuses.Completed, startDate: '', addedDate: '', order: 0,
+            priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID1
+        },
+        {
+            id: '2', title: "JS", status: TaskStatuses.Completed, startDate: '', addedDate: '', order: 0,
+            priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID1
+        },
+        {
+            id: '3', title: "ReactJS", status: TaskStatuses.New, startDate: '', addedDate: '', order: 0,
+            priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID1
+        },
+        {
+            id: '4', title: "Rest API", status: TaskStatuses.New, startDate: '', addedDate: '', order: 0,
+            priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID1
+        },
+        {
+            id: '5', title: "GraphQL", status: TaskStatuses.New, startDate: '', addedDate: '', order: 0,
+            priority: TaskPriorities.Low, deadline: '', description: '', todoListId: todolistID1
+        }
+    ];
+    let state: TasksType = {
+        [todolistID1]: []
+    }
+    const action = setTasksAC(tasks, todolistID1);
+
+    const endState = tasksReducer(state, action)
+
+
+    const keys = Object.keys(endState);
+
+
+    expect(keys.length).toBe(1);
+    expect(endState[todolistID1][0].title).toBe("HTML&CSS");
+})

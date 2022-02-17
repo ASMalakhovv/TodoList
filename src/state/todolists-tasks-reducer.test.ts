@@ -1,8 +1,8 @@
 import {TasksType} from "../App";
 import {v1} from "uuid";
-import {addTodoListAC, removeTodoListAC, TodolistDomainType, todoListsReducer} from "./todolists-reducer";
+import {addTodoListAC, removeTodoListAC, setTodo, TodolistDomainType, todoListsReducer} from "./todolists-reducer";
 import {tasksReducer} from "./tasks-reducer";
-import {TaskPriorities, TaskStatuses} from "../api/todolist-api";
+import {TaskPriorities, TaskStatuses, TodolistType} from "../api/todolist-api";
 
 test('ids should be equals', () => {
     const tasks: TasksType = {};
@@ -80,4 +80,22 @@ test('property with todolistId should be deleted', () => {
 
     expect(keys.length).toBe(1);
     expect(endState[action.id]).toBeUndefined();
+})
+
+
+test('properties must be added when getting todoLists', () => {
+    const todolistID1 = v1()
+    const todolistID2 = v1()
+    let todoLists: Array<TodolistType> = [
+        {id: todolistID1, title: "What to learn", addedDate: '', order: 0},
+        {id: todolistID2, title: "What to buy", addedDate: '', order: 0}
+    ];
+
+    const action = setTodo(todoLists);
+
+    const endState = tasksReducer({}, action)
+
+
+    expect(endState[todolistID1]).toStrictEqual([]);
+    expect(endState[todolistID2]).toStrictEqual([]);
 })

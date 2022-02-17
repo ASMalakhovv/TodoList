@@ -8,7 +8,14 @@ import {Delete} from "@material-ui/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "./redux/store";
 import {changeTodoListFilterAC} from "./state/todolists-reducer";
-import {addTasksAC, changeStatusTasksAC, removeTasksAC, updateTasksAC} from "./state/tasks-reducer";
+import {
+    addTask,
+    addTasksAC,
+    changeStatusTask,
+    changeStatusTasksAC,
+    removeTasksAC,
+    updateTasksAC
+} from "./state/tasks-reducer";
 import {TaskStatuses} from "./api/todolist-api";
 
 
@@ -39,7 +46,7 @@ function TodoList(props: TodoListPropsType) {
         }
         const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
             let status = e.currentTarget.checked ? TaskStatuses.Completed : TaskStatuses.New
-            dispatch(changeStatusTasksAC(props.todoListID, t.id, status))
+            dispatch(changeStatusTask(props.todoListID, t.id, status))
         }
         return (
             <ListItem key={t.id}>
@@ -72,7 +79,8 @@ function TodoList(props: TodoListPropsType) {
         props.removeTodolist(props.todoListID)
     }
     const callback = (title: string) => {
-        dispatch(addTasksAC(props.todoListID, title))
+        let todolistId = props.todoListID
+        dispatch(addTask({todolistId, title}))
     }
     const updateTodoListHandler = (title: string) => {
         props.updateTodoList(props.todoListID, title)

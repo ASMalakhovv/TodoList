@@ -42,6 +42,10 @@ export const todolistApi = {
         return instance.put<CommonResponseType<TaskType>, AxiosResponse<CommonResponseType<TaskType>>, RequestUpdateTask>
         (`/todo-lists/${todolistId}/tasks/${taskId}`, model)
     },
+    changeStatusTitle(todolistId: string, taskId: string, model: RequestUpdateTask) {
+        return instance.put<CommonResponseType<{ item: TaskType }>, AxiosResponse<CommonResponseType<{ item: TaskType }>>, RequestUpdateTask>
+        (`/todo-lists/${todolistId}/tasks/${taskId}`, model)
+    }
 }
 
 

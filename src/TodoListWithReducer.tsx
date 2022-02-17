@@ -7,7 +7,7 @@ import {IconButton, List} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "./redux/store";
-import {addTasksAC} from "./state/tasks-reducer";
+import {addTask, addTasksAC, getTasksTC} from "./state/tasks-reducer";
 import {Task} from "./Task/Task";
 import {TaskStatuses, TaskType} from "./api/todolist-api";
 
@@ -25,9 +25,8 @@ const TodoListWithReducer = React.memo((props: TodoListPropsType) => {
     console.log('TodoList')
 
     useEffect(() => {
-
+        dispatch(getTasksTC(props.todoListID))
     }, [])
-
 
 
     let tasksForTodolist = useSelector<StateType, Array<TaskType>>(state => state.tasks[props.todoListID])
@@ -56,7 +55,8 @@ const TodoListWithReducer = React.memo((props: TodoListPropsType) => {
 
 
     const callback = useCallback((title: string) => {
-        dispatch(addTasksAC(props.todoListID, title))
+        let todolistId = props.todoListID
+        dispatch(addTask({todolistId, title}))
     }, [dispatch, props.todoListID])
 
 
