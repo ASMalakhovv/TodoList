@@ -23,7 +23,7 @@ export const todolistApi = {
 
     },
     updateTodo(tdLId: string, title: string) {
-        return instance.put<CommonResponseType>(`todo-lists/${tdLId}`, {title})
+        return instance.put<CommonResponseType, AxiosResponse<CommonResponseType>, { title: string }>(`todo-lists/${tdLId}`, {title})
 
     },
     getTasks(todolistId: string) {
@@ -42,7 +42,7 @@ export const todolistApi = {
         return instance.put<CommonResponseType<TaskType>, AxiosResponse<CommonResponseType<TaskType>>, RequestUpdateTask>
         (`/todo-lists/${todolistId}/tasks/${taskId}`, model)
     },
-    changeStatusTitle(todolistId: string, taskId: string, model: RequestUpdateTask) {
+    changeStatusOrTitle(todolistId: string, taskId: string, model: RequestUpdateTask) {
         return instance.put<CommonResponseType<{ item: TaskType }>, AxiosResponse<CommonResponseType<{ item: TaskType }>>, RequestUpdateTask>
         (`/todo-lists/${todolistId}/tasks/${taskId}`, model)
     }

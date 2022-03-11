@@ -1,8 +1,8 @@
 import {v1} from "uuid";
 import {addTasksAC, changeStatusTasksAC, removeTasksAC, setTasksAC, tasksReducer, updateTasksAC} from "./tasks-reducer";
-import {addTodoListAC} from "./todolists-reducer";
 import {TasksType} from "../App";
 import {TaskPriorities, TaskStatuses, TaskType} from "../api/todolist-api";
+import {setTodo} from "./todolists-reducer";
 
 
 test("user reducer should only change the name of the task", () => {
@@ -313,7 +313,9 @@ test('new array should be added when new todolist is added', () => {
         ]
     };
 
-    const action = addTodoListAC("new todolist");
+    const action = setTodo([
+        {id: '1', title: "What to learn", addedDate: '', order: 0},
+    ]);
 
     const endState = tasksReducer(tasks, action)
 

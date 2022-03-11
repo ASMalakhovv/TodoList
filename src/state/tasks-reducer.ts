@@ -1,17 +1,16 @@
-import {v1} from "uuid"
-import {addTodoListAC, removeTodoListAC, SetTodolist} from "./todolists-reducer";
-import {TaskPriorities, TaskStatuses, TaskType, todolistApi} from "../api/todolist-api";
+import {removeTodoListAC, SetTodolist} from "./todolists-reducer";
+import {RequestUpdateTask, TaskStatuses, TaskType, todolistApi} from "../api/todolist-api";
 import {TasksType} from "../App";
 import {Dispatch} from "redux";
 import {StateType} from "../redux/store";
+import {setStatusApp} from "./app-reducer";
 
 
-export type ActionsType =
+export type TasksActionsType =
     ReturnType<typeof updateTasksAC>
     | ReturnType<typeof removeTasksAC>
     | ReturnType<typeof addTasksAC>
     | ReturnType<typeof changeStatusTasksAC>
-    | ReturnType<typeof addTodoListAC>
     | ReturnType<typeof removeTodoListAC>
     | SetTodolist
     | SetTasksActionType
@@ -71,10 +70,9 @@ let initialState: TasksType = {
     ],*/
 }
 
-export function tasksReducer(state: TasksType = initialState, action: ActionsType): TasksType {
+export function tasksReducer(state: TasksType = initialState, action: TasksActionsType): TasksType {
     switch (action.type) {
         case 'SET-TASKS': {
-            debugger
             const stateCopy = {...state}
             stateCopy[action.todolistId] = action.tasks
             return stateCopy
@@ -109,19 +107,9 @@ export function tasksReducer(state: TasksType = initialState, action: ActionsTyp
                     ...state[action.task.todoListId]]
             }
         case "CHANGE-STATUS":
-            debugger
             return {
                 ...state,
                 [action.task.todoListId]: state[action.task.todoListId].map(t => t.id === action.task.id ? {...t, ...action.task} : t)
-                /*[action.todolistID1]: state[action.todolistID1].map(t => t.id === action.id ?
-                    {...t, status: action.status}
-                    : t
-                )*/
-            }
-        case "ADD-TODOLIST":
-            return {
-                ...state,
-                [action.todolistId]: []
             }
         case 'REMOVE-TODOLIST':
             let {[action.id]: [], ...otherProperty} = {...state}
@@ -184,33 +172,59 @@ export const getTasksTC = (todolistId: string) => (dispatch: Dispatch) => {
 }
 
 export const removeTask = (todolistId: string, taskId: string) => (dispatch: Dispatch) => {
+    dispatch(setStatusApp('loading'))
     todolistApi.deleteTask(todolistId, taskId)
         .then((res) => {
             if (res.data.resultCode === 0) {
                 dispatch(removeTasksAC(todolistId, taskId))
+                dispatch(setStatusApp('idle'))
             }
         })
 }
 
 export const addTask = (payload: { todolistId: string, title: string }) => (dispatch: Dispatch) => {
+    dispatch(setStatusApp('loading'))
     todolistApi.createTask(payload.todolistId, payload.title)
         .then((res) => {
             if (res.data.resultCode === 0) {
                 let task = res.data.data.item
                 dispatch(addTasksAC(task))
+                dispatch(setStatusApp('idle'))
             }
         })
 }
 
-export const changeStatusTask = (todolistId: string, taskId: string, status: TaskStatuses) =>
+export const changeStatusOrTitleTask = (todolistId: string, taskId: string, payload: { status?: TaskStatuses, title?: string }) =>
     (dispatch: Dispatch, getState: () => StateType) => {
         let task = getState().tasks[todolistId].find(t => t.id === taskId)
         if (task) {
-            todolistApi.changeStatusTitle(todolistId, taskId, {...task, status})
+            dispatch(setStatusApp('loading'))
+            let model: RequestUpdateTask = {
+                status: task.status,
+                title: task.title,
+                description: task.description,
+                deadline: task.deadline,
+                priority: task.priority,
+                startDate: task.startDate
+            };
+            if (payload.status === 0 || payload.status === 2) {
+                model = {
+                    ...model,
+                    status: payload.status
+                }
+            }
+            if (payload.title) {
+                model = {
+                    ...model,
+                    title: payload.title
+                }
+            }
+            todolistApi.changeStatusOrTitle(todolistId, taskId, model)
                 .then((res) => {
                     if (res.data.resultCode === 0) {
                         let newTask = res.data.data.item
                         dispatch(changeStatusTasksAC(newTask))
+                        dispatch(setStatusApp('idle'))
                     }
                 })
         }

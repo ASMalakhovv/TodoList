@@ -8,10 +8,9 @@ import {Menu} from '@material-ui/icons';
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "./redux/store";
 import {
-    addTodoListAC,
     changeTodoListFilterAC,
     changeTodoListTitleAC,
-    removeTodoListAC
+    removeTodoListAC, setTodo
 } from "./state/todolists-reducer";
 import {TodolistType, TaskType} from './api/todolist-api';
 
@@ -47,7 +46,9 @@ function App() {
 
 
     const addTodolist = (title: string) => {
-        dispatch(addTodoListAC(title))
+        dispatch(setTodo([
+            {id: '1', title: "What to learn", addedDate: '', order: 0},
+        ]))
     };
 
     return (

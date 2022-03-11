@@ -1,25 +1,34 @@
 import './components/Button/Button.css'
 import {AddItemForm} from "./components/AddItemForm";
-import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from '@material-ui/core';
-import {Menu} from '@material-ui/icons';
+import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Paper from '@material-ui/core/Paper';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Menu from '@material-ui/icons/Menu';
 import {
-    addTodoListAC,
-    changeTodoListFilterAC,
-    changeTodoListTitleAC, getTodoListsThunk,
-    removeTodoListAC,
+    changeTodoListFilterAC, changeTodoListTitle,
+    createTodoListThunk, deleteTodoListThunk, getTodoListsThunk,
 } from "./state/todolists-reducer";
 import TodoListWithReducer from "./TodoListWithReducer";
-import {useDispatch, useSelector} from "react-redux";
+import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import {StateType} from "./redux/store";
 import {useCallback, useEffect} from "react";
 import {TodoListsDomainType} from "./App";
+import {RequestStatusType} from "./state/app-reducer";
 
 
 export type FilterValuesType = 'all' | 'active' | 'completed'
 
-
+export const useAppSelector: TypedUseSelectorHook<StateType> = useSelector
 
 function AppWithRedux() {
+
+    const status = useAppSelector<RequestStatusType>((state) => state.app.status)
 
     useEffect(() => {
         dispatch(getTodoListsThunk)
@@ -32,12 +41,12 @@ function AppWithRedux() {
 
 
     const updateTodoList = useCallback((todoListID: string, title: string) => {
-        dispatch(changeTodoListTitleAC(todoListID, title))
+        debugger
+        dispatch(changeTodoListTitle(todoListID, title))
     }, [dispatch])
 
     const removeTodolist = useCallback((todoListsID: string) => {
-        let action = removeTodoListAC(todoListsID)
-        dispatch(action)
+        dispatch(deleteTodoListThunk(todoListsID))
     }, [dispatch])
 
     const changeFilter = useCallback((todoListID: string, value: FilterValuesType) => {
@@ -45,8 +54,7 @@ function AppWithRedux() {
     }, [dispatch])
 
     const addTodolist = useCallback((title: string) => {
-        let action = addTodoListAC(title)
-        dispatch(action)
+        dispatch(createTodoListThunk(title))
     }, [dispatch]);
 
     return (
@@ -62,6 +70,9 @@ function AppWithRedux() {
                     <Button color="inherit">Login</Button>
                 </Toolbar>
             </AppBar>
+
+            {status === 'loading' && <LinearProgress color="secondary"/>}
+
             <Container fixed>
                 <Grid container style={{padding: '20px'}}>
                     <AddItemForm callback={addTodolist}/>

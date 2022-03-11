@@ -1,6 +1,6 @@
 import {TasksType} from "../App";
 import {v1} from "uuid";
-import {addTodoListAC, removeTodoListAC, setTodo, TodolistDomainType, todoListsReducer} from "./todolists-reducer";
+import {removeTodoListAC, setTodo, TodolistDomainType, todoListsReducer} from "./todolists-reducer";
 import {tasksReducer} from "./tasks-reducer";
 import {TaskPriorities, TaskStatuses, TodolistType} from "../api/todolist-api";
 
@@ -8,17 +8,19 @@ test('ids should be equals', () => {
     const tasks: TasksType = {};
     const todoLists: Array<TodolistDomainType> = []
 
-    const action = addTodoListAC("new todolist");
+    const action = setTodo([
+        {id: '1', title: "What to learn", addedDate: '', order: 0},
+    ])
 
     const endTasksState = tasksReducer(tasks, action)
-    const endTodolistsState = todoListsReducer(todoLists, action)
+    const endTodoListsState = todoListsReducer(todoLists, action)
 
     const keys = Object.keys(endTasksState);
     const idFromTasks = keys[0];
-    const idFromTodolists = endTodolistsState[0].id;
+    const idFromTodoLists = endTodoListsState[0].id;
 
-    expect(idFromTasks).toBe(action.todolistId);
-    expect(idFromTodolists).toBe(action.todolistId);
+    expect(idFromTasks).toBe(action.todolist[0].id);
+    expect(idFromTodoLists).toBe(action.todolist[0].id);
 });
 
 test('property with todolistId should be deleted', () => {

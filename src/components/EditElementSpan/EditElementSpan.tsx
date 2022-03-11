@@ -27,7 +27,7 @@ export const EditElementSpan = React.memo(({title, ...props}: EditElementSpanPro
         } else {
             setError('Enter text or delete the task')
         }
-    }, [props.callback]);
+    }, [props.callback, newTitle]);
 
     const onChangeHandle = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         setError(null)

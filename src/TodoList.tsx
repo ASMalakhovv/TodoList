@@ -10,9 +10,7 @@ import {StateType} from "./redux/store";
 import {changeTodoListFilterAC} from "./state/todolists-reducer";
 import {
     addTask,
-    addTasksAC,
-    changeStatusTask,
-    changeStatusTasksAC,
+    changeStatusOrTitleTask,
     removeTasksAC,
     updateTasksAC
 } from "./state/tasks-reducer";
@@ -46,7 +44,7 @@ function TodoList(props: TodoListPropsType) {
         }
         const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
             let status = e.currentTarget.checked ? TaskStatuses.Completed : TaskStatuses.New
-            dispatch(changeStatusTask(props.todoListID, t.id, status))
+            dispatch(changeStatusOrTitleTask(props.todoListID, t.id, {status}))
         }
         return (
             <ListItem key={t.id}>
