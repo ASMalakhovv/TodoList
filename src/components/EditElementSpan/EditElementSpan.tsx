@@ -6,18 +6,21 @@ import s from './EditElementSpan.module.css'
 export type EditElementSpanPropsType = {
     title: string
     callback: (title: string) => void
+    entityStatus?:boolean
 }
 
 
 export const EditElementSpan = React.memo(({title, ...props}: EditElementSpanPropsType) => {
-    console.log('EditSpan')
     const [newTitle, setNewTitle] = useState(title);
     const [error, setError] = useState<string | null>(null);
     const [edit, setEdit] = useState(false);
 
 
     const editTrue = useCallback(() => {
-        setEdit(true)
+        debugger
+        if (!props.entityStatus) {
+            setEdit(true)
+        }
     }, []);
 
     const editFalse = useCallback(() => {

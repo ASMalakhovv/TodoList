@@ -6,12 +6,15 @@ import {EditElementSpan} from "../components/EditElementSpan/EditElementSpan";
 import {Delete} from "@material-ui/icons";
 import {TaskStatuses, TaskType} from "../api/todolist-api";
 
+
 type TaskPropsType = {
     todoListID: string
     task: TaskType
+    entityStatus: boolean
 }
 
 export const Task = React.memo((props: TaskPropsType) => {
+
 
     console.log('Task')
     const dispatch = useDispatch()
@@ -40,11 +43,14 @@ export const Task = React.memo((props: TaskPropsType) => {
                     color="primary"
                     inputProps={{'aria-label': 'secondary checkbox'}}
                     onChange={onChangeHandler}
+                    disabled={props.entityStatus}
                 />
                 <EditElementSpan title={props.task.title}
-                                 callback={updateTaskHandler}/>
+                                 callback={updateTaskHandler}
+                                 entityStatus={props.entityStatus}
+                />
             </div>
-            <IconButton onClick={onClickMap}><Delete/> </IconButton>
+            <IconButton onClick={onClickMap} disabled={props.entityStatus}><Delete/> </IconButton>
 
         </ListItem>
     )

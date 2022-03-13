@@ -1,5 +1,6 @@
 import React, {ChangeEvent, KeyboardEvent} from "react";
 import {TextField} from "@material-ui/core";
+import {RequestStatusType} from "../../state/app-reducer";
 
 
 export type InputProps = {
@@ -8,6 +9,7 @@ export type InputProps = {
     error: string | null
     setError: (error: string | null) => void
     onClickHandlerForEnter: () => void
+    entityStatus?:RequestStatusType
 }
 
 export const Input = (props: InputProps) => {
@@ -33,6 +35,7 @@ export const Input = (props: InputProps) => {
                    label={'Type value'}
                    error={!!props.error}
                    helperText={props.error}
+                   disabled={props.entityStatus === 'loading'}
         />
 
     )

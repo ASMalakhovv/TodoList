@@ -1,9 +1,10 @@
-import {removeTodoListAC, SetTodolist} from "./todolists-reducer";
+import {changeTodolistEntityStatusAC, removeTodoListAC, SetTodolist} from "./todolists-reducer";
 import {RequestUpdateTask, TaskStatuses, TaskType, todolistApi} from "../api/todolist-api";
-import {TasksType} from "../App";
 import {Dispatch} from "redux";
 import {StateType} from "../redux/store";
 import {setStatusApp} from "./app-reducer";
+import {AxiosError} from "axios";
+import {handleServerAppError, handleServerNetworkError} from "../utils/error-utils";
 
 
 export type TasksActionsType =
@@ -22,6 +23,10 @@ export type SetTasksActionType = {
     todolistId: string
 }
 
+
+export type TasksType = {
+    [key: string]: TaskType[]
+}
 
 let initialState: TasksType = {
     /*['1']: [
@@ -161,24 +166,43 @@ export const setTasksAC = (tasks: Array<TaskType>, todolistId: string): SetTasks
 
 
 // THUNK
+enum ResultCode {
+    success,
+    error,
+    captcha
+}
 
 export const getTasksTC = (todolistId: string) => (dispatch: Dispatch) => {
+    dispatch(setStatusApp('loading'))
     todolistApi.getTasks(todolistId)
         .then((res) => {
             const tasks = res.data.items
             const action = setTasksAC(tasks, todolistId)
             dispatch(action)
         })
+        .catch((rej: AxiosError) => {
+            handleServerNetworkError(dispatch, rej.message)
+        })
+        .finally(() => dispatch(setStatusApp('idle')))
 }
+
 
 export const removeTask = (todolistId: string, taskId: string) => (dispatch: Dispatch) => {
     dispatch(setStatusApp('loading'))
+    dispatch(changeTodolistEntityStatusAC('loading', todolistId))
     todolistApi.deleteTask(todolistId, taskId)
         .then((res) => {
-            if (res.data.resultCode === 0) {
+            if (res.data.resultCode === ResultCode.success) {
                 dispatch(removeTasksAC(todolistId, taskId))
-                dispatch(setStatusApp('idle'))
             }
+        })
+        .catch((rej: AxiosError) => {
+            handleServerNetworkError(dispatch, rej.message)
+        })
+        .finally(() => {
+            dispatch(setStatusApp('idle'))
+            dispatch(changeTodolistEntityStatusAC('succeeded', todolistId))
+
         })
 }
 
@@ -186,12 +210,17 @@ export const addTask = (payload: { todolistId: string, title: string }) => (disp
     dispatch(setStatusApp('loading'))
     todolistApi.createTask(payload.todolistId, payload.title)
         .then((res) => {
-            if (res.data.resultCode === 0) {
+            if (res.data.resultCode === ResultCode.success) {
                 let task = res.data.data.item
                 dispatch(addTasksAC(task))
-                dispatch(setStatusApp('idle'))
+            } else {
+                handleServerAppError<{ item: TaskType }>(dispatch, res.data)
             }
         })
+        .catch((rej: AxiosError) => {
+            handleServerNetworkError(dispatch, rej.message)
+        })
+        .finally(() => dispatch(setStatusApp('idle')))
 }
 
 export const changeStatusOrTitleTask = (todolistId: string, taskId: string, payload: { status?: TaskStatuses, title?: string }) =>
@@ -221,12 +250,20 @@ export const changeStatusOrTitleTask = (todolistId: string, taskId: string, payl
             }
             todolistApi.changeStatusOrTitle(todolistId, taskId, model)
                 .then((res) => {
-                    if (res.data.resultCode === 0) {
+                    if (res.data.resultCode === ResultCode.success) {
                         let newTask = res.data.data.item
                         dispatch(changeStatusTasksAC(newTask))
-                        dispatch(setStatusApp('idle'))
+                    } else {
+                        handleServerAppError(dispatch, res.data)
                     }
                 })
+                .catch((rej) => {
+                    handleServerNetworkError(dispatch, rej.message)
+                })
+                .finally(() => {
+                    dispatch(setStatusApp('idle'))
+                })
+
         }
     }
 

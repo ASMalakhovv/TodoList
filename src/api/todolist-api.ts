@@ -16,7 +16,6 @@ export const todolistApi = {
     createTodo(title: string) {
         return instance.post<CommonResponseType<{ item: TodolistType }>, AxiosResponse<CommonResponseType<{ item: TodolistType }>>, { title: string }>
         (`todo-lists`, {title})
-
     },
     delTodo(delId: string) {
         return instance.delete<CommonResponseType>(`todo-lists/${delId}`)
@@ -56,7 +55,7 @@ export type TodolistType = {
     title: string
 }
 
-type CommonResponseType<T = {}> = {
+export type CommonResponseType<T = {}> = {
     resultCode: number
     messages: string[]
     fieldsErrors: string[]

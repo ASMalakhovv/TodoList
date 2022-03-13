@@ -12,14 +12,14 @@ import Typography from '@material-ui/core/Typography';
 import Menu from '@material-ui/icons/Menu';
 import {
     changeTodoListFilterAC, changeTodoListTitle,
-    createTodoListThunk, deleteTodoListThunk, getTodoListsThunk,
+    createTodoListThunk, deleteTodoListThunk, getTodoListsThunk, TodolistDomainType,
 } from "./state/todolists-reducer";
 import TodoListWithReducer from "./TodoListWithReducer";
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import {StateType} from "./redux/store";
 import {useCallback, useEffect} from "react";
-import {TodoListsDomainType} from "./App";
 import {RequestStatusType} from "./state/app-reducer";
+import {ErrorSnackbar} from "./components/ErrorSnackbar/ErrorSnackbar";
 
 
 export type FilterValuesType = 'all' | 'active' | 'completed'
@@ -37,11 +37,9 @@ function AppWithRedux() {
 
     console.log('AppWithRedux')
     const dispatch = useDispatch()
-    const todoLists = useSelector<StateType, Array<TodoListsDomainType>>(state => state.todoLists)
-
+    const todoLists = useSelector<StateType, Array<TodolistDomainType>>(state => state.todoLists)
 
     const updateTodoList = useCallback((todoListID: string, title: string) => {
-        debugger
         dispatch(changeTodoListTitle(todoListID, title))
     }, [dispatch])
 
@@ -59,6 +57,7 @@ function AppWithRedux() {
 
     return (
         < div className="App">
+            <ErrorSnackbar/>
             <AppBar position="static">
                 <Toolbar>
                     <IconButton edge="start" color="inherit" aria-label="menu">
@@ -70,9 +69,7 @@ function AppWithRedux() {
                     <Button color="inherit">Login</Button>
                 </Toolbar>
             </AppBar>
-
             {status === 'loading' && <LinearProgress color="secondary"/>}
-
             <Container fixed>
                 <Grid container style={{padding: '20px'}}>
                     <AddItemForm callback={addTodolist}/>
@@ -83,6 +80,7 @@ function AppWithRedux() {
                             <Grid item>
                                 <Paper style={{padding: '10px'}}>
                                     <TodoListWithReducer
+                                        entityStatus={t.entityStatus}
                                         key={t.id}
                                         title={t.title}
                                         changeFilter={changeFilter}

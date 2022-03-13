@@ -1,5 +1,4 @@
 import React, {useCallback, useEffect} from 'react';
-import {FilterValuesType} from "./App";
 import {AddItemForm} from "./components/AddItemForm";
 import {EditElementSpan} from "./components/EditElementSpan/EditElementSpan";
 import {ButtonMy} from "./components/Button/ButtonMy";
@@ -7,9 +6,11 @@ import {IconButton, List} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {StateType} from "./redux/store";
-import {addTask, addTasksAC, getTasksTC} from "./state/tasks-reducer";
+import {addTask, getTasksTC} from "./state/tasks-reducer";
 import {Task} from "./Task/Task";
 import {TaskStatuses, TaskType} from "./api/todolist-api";
+import {RequestStatusType} from "./state/app-reducer";
+import {FilterValuesType} from "./AppWithRedux";
 
 
 type TodoListPropsType = {
@@ -19,10 +20,10 @@ type TodoListPropsType = {
     todoListID: string
     removeTodolist: (todoListID: string) => void
     updateTodoList: (todoListID: string, title: string) => void
+    entityStatus:RequestStatusType
 }
 
 const TodoListWithReducer = React.memo((props: TodoListPropsType) => {
-    console.log('TodoList')
 
     useEffect(() => {
         dispatch(getTasksTC(props.todoListID))
@@ -41,7 +42,7 @@ const TodoListWithReducer = React.memo((props: TodoListPropsType) => {
         tasksForTodolist = tasksForTodolist.filter(t => t.status === TaskStatuses.Completed)
     }
 
-    const tasksJSXElements = tasksForTodolist.map(t => <Task task={t} todoListID={props.todoListID}/>)
+    const tasksJSXElements = tasksForTodolist.map(t => <Task task={t} todoListID={props.todoListID} entityStatus={props.entityStatus === 'loading'}/>)
 
 
     const tsarFoo = useCallback((todoListID: string, value: FilterValuesType) => {
@@ -68,15 +69,14 @@ const TodoListWithReducer = React.memo((props: TodoListPropsType) => {
     return (
         <div className="App" key={props.todoListID}>
             <div>
-                <EditElementSpan title={props.title} callback={updateTodoListHandler}/>
-                <IconButton onClick={onClickHandlerForRemoveTodolist} name="delete"><Delete/> </IconButton>
+                <EditElementSpan title={props.title} callback={updateTodoListHandler} />
+                <IconButton onClick={onClickHandlerForRemoveTodolist} name="delete" disabled={props.entityStatus === 'loading'}><Delete/> </IconButton>
             </div>
-            <AddItemForm callback={callback}/>
+            <AddItemForm callback={callback} entityStatus={props.entityStatus}/>
             <List>
                 {tasksJSXElements}
             </List>
             <div>
-
                 <ButtonMy callback={() => {
                     tsarFoo(props.todoListID, "all")
                 }} name={"all"} filter={props.filter}/>
