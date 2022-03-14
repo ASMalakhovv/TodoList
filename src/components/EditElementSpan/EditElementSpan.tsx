@@ -23,6 +23,7 @@ export const EditElementSpan = React.memo(({title, ...props}: EditElementSpanPro
     }, [props.entityStatus]);
 
     const editFalse = useCallback(() => {
+        debugger
         if (newTitle.trim() !== "") {
             setEdit(false)
             props.callback(newTitle)
@@ -37,10 +38,11 @@ export const EditElementSpan = React.memo(({title, ...props}: EditElementSpanPro
     }, [])
 
     const onKeyPressHandler = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
+        debugger
         if (e.code === "Enter") {
             editFalse()
         }
-    }, [])
+    }, [newTitle])
 
     return (
         edit ? <div>

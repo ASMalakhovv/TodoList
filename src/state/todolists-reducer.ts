@@ -102,7 +102,6 @@ export const setTodo = (todolist: Array<TodolistType>) => {
 }
 
 export const changeTodolistEntityStatusAC = (entityStatus: RequestStatusType, todoId: string) => {
-    debugger
     return {
         type: 'TODO/ENTITY-STATUS',
         entityStatus,
