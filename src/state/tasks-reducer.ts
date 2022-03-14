@@ -1,10 +1,10 @@
-import {changeTodolistEntityStatusAC, removeTodoListAC, SetTodolist} from "./todolists-reducer";
+import {removeTodoListAC, SetTodolist} from "./todolists-reducer";
 import {RequestUpdateTask, TaskStatuses, TaskType, todolistApi} from "../api/todolist-api";
 import {Dispatch} from "redux";
 import {StateType} from "../redux/store";
 import {setStatusApp} from "./app-reducer";
 import {AxiosError} from "axios";
-import {handleServerAppError, handleServerNetworkError} from "../utils/error-utils";
+import {handleChangeTitleOrStatusTask, handleServerAppError, handleServerNetworkError} from "../utils/error-utils";
 
 
 export type TasksActionsType =
@@ -188,8 +188,7 @@ export const getTasksTC = (todolistId: string) => (dispatch: Dispatch) => {
 
 
 export const removeTask = (todolistId: string, taskId: string) => (dispatch: Dispatch) => {
-    dispatch(setStatusApp('loading'))
-    dispatch(changeTodolistEntityStatusAC('loading', todolistId))
+    handleChangeTitleOrStatusTask(dispatch,'loading',todolistId)
     todolistApi.deleteTask(todolistId, taskId)
         .then((res) => {
             if (res.data.resultCode === ResultCode.success) {
@@ -200,9 +199,7 @@ export const removeTask = (todolistId: string, taskId: string) => (dispatch: Dis
             handleServerNetworkError(dispatch, rej.message)
         })
         .finally(() => {
-            dispatch(setStatusApp('idle'))
-            dispatch(changeTodolistEntityStatusAC('succeeded', todolistId))
-
+            handleChangeTitleOrStatusTask(dispatch,'succeeded',todolistId)
         })
 }
 
@@ -227,7 +224,7 @@ export const changeStatusOrTitleTask = (todolistId: string, taskId: string, payl
     (dispatch: Dispatch, getState: () => StateType) => {
         let task = getState().tasks[todolistId].find(t => t.id === taskId)
         if (task) {
-            dispatch(setStatusApp('loading'))
+            handleChangeTitleOrStatusTask(dispatch,'loading',todolistId)
             let model: RequestUpdateTask = {
                 status: task.status,
                 title: task.title,
@@ -261,7 +258,7 @@ export const changeStatusOrTitleTask = (todolistId: string, taskId: string, payl
                     handleServerNetworkError(dispatch, rej.message)
                 })
                 .finally(() => {
-                    dispatch(setStatusApp('idle'))
+                    handleChangeTitleOrStatusTask(dispatch,'succeeded',todolistId)
                 })
 
         }

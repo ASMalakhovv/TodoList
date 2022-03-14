@@ -3,7 +3,7 @@ import {todolistApi, TodolistType} from "../api/todolist-api";
 import {AppThunk} from "../redux/store";
 import {RequestStatusType, setStatusApp} from "./app-reducer";
 import {AxiosError} from "axios";
-import {handleServerAppError, handleServerNetworkError} from "../utils/error-utils";
+import {handleChangeTitleOrStatusTask, handleServerAppError, handleServerNetworkError} from "../utils/error-utils";
 import {FilterValuesType} from "../AppWithRedux";
 
 export type TodoListsActionsType =
@@ -150,8 +150,7 @@ export const createTodoListThunk = (title: string): AppThunk => (dispatch: Dispa
 }
 
 export const deleteTodoListThunk = (todoListId: string): AppThunk => (dispatch: Dispatch) => {
-    dispatch(setStatusApp('loading'))
-    dispatch(changeTodolistEntityStatusAC('loading', todoListId))
+    handleChangeTitleOrStatusTask(dispatch,'loading',todoListId)
     todolistApi.delTodo(todoListId)
         .then(res => {
             if (res.data.resultCode === ResultCode.success) {
