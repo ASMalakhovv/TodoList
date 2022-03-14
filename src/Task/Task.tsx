@@ -14,7 +14,7 @@ type TaskPropsType = {
 }
 
 export const Task = React.memo((props: TaskPropsType) => {
-
+debugger
 
     console.log('Task')
     const dispatch = useDispatch()

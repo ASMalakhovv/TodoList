@@ -17,11 +17,10 @@ export const EditElementSpan = React.memo(({title, ...props}: EditElementSpanPro
 
 
     const editTrue = useCallback(() => {
-        debugger
         if (!props.entityStatus) {
             setEdit(true)
         }
-    }, []);
+    }, [props.entityStatus]);
 
     const editFalse = useCallback(() => {
         if (newTitle.trim() !== "") {

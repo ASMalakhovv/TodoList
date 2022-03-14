@@ -69,7 +69,7 @@ const TodoListWithReducer = React.memo((props: TodoListPropsType) => {
     return (
         <div className="App" key={props.todoListID}>
             <div>
-                <EditElementSpan title={props.title} callback={updateTodoListHandler} />
+                <EditElementSpan title={props.title} callback={updateTodoListHandler} entityStatus={props.entityStatus === 'loading'}/>
                 <IconButton onClick={onClickHandlerForRemoveTodolist} name="delete" disabled={props.entityStatus === 'loading'}><Delete/> </IconButton>
             </div>
             <AddItemForm callback={callback} entityStatus={props.entityStatus}/>

@@ -49,7 +49,6 @@ export function todoListsReducer(state: Array<TodolistDomainType> = initialState
     switch (action.type) {
         case "TODO/ENTITY-STATUS":
             return state.map(t => t.id === action.todoId ? {...t, entityStatus: action.entityStatus} : t)
-
         case "SET-TODOLIST":
             let setTodoList: Array<TodolistDomainType> = action.todolist.map(e => ({
                 ...e,
