@@ -48,7 +48,7 @@ function AppWithRedux() {
     }, [dispatch])
 
     const changeFilter = useCallback((todoListID: string, value: FilterValuesType) => {
-        dispatch(changeTodoListFilterAC(todoListID, value))
+        dispatch(changeTodoListFilterAC({id: todoListID, filter: value}))
     }, [dispatch])
 
     const addTodolist = useCallback((title: string) => {

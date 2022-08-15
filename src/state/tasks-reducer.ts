@@ -5,6 +5,7 @@ import {StateType} from "../redux/store";
 import {setStatusApp} from "./app-reducer";
 import {AxiosError} from "axios";
 import {handleChangeTitleOrStatusTask, handleServerAppError, handleServerNetworkError} from "../utils/error-utils";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 
 export type TasksActionsType =
@@ -75,7 +76,45 @@ let initialState: TasksType = {
     ],*/
 }
 
-export function tasksReducer(state: TasksType = initialState, action: TasksActionsType): TasksType {
+const slice = createSlice({
+    name: 'tasks',
+    initialState,
+    reducers: {
+        updateTasksAC: (state, action:PayloadAction<{todolistID1: string, id: string, title: string}>) => {
+            state[action.payload.todolistID1].forEach(t => {
+                if (t.id === action.payload.id) {
+                    t.title = action.payload.title
+                }
+            })
+        },
+        removeTasksAC: (state, action:PayloadAction<{todolistID1: string, removeID: string}>) => {
+            state[action.payload.todolistID1].forEach((t,i) => {
+                if (t.id === action.payload.removeID) {
+                    state[action.payload.todolistID1].splice(i,1)
+                }
+            })
+        },
+        addTasksAC: (state, action:PayloadAction<{task: TaskType}>) => {
+            state[action.payload.task.todoListId].push(action.payload.task)
+        },
+        changeStatusTasksAC: (state, action:PayloadAction<{task: TaskType}>) => {
+            state[action.payload.task.todoListId].forEach( (t, i) => {
+                if (t.id === action.payload.task.id) {
+                    state[action.payload.task.todoListId].splice(i,1,action.payload.task)
+                }
+            })
+        },
+        setTasksAC: (state, action:PayloadAction<{tasks: Array<TaskType>, todolistId: string}>) => {
+            state[action.payload.todolistId] = action.payload.tasks
+        }
+    }
+})
+
+export const tasksReducer = slice.reducer
+export const {changeStatusTasksAC, setTasksAC, updateTasksAC, removeTasksAC, addTasksAC} = slice.actions
+
+
+/*export function tasksReducer(state: TasksType = initialState, action: TasksActionsType): TasksType {
     switch (action.type) {
         case 'SET-TASKS': {
             const stateCopy = {...state}
@@ -122,9 +161,10 @@ export function tasksReducer(state: TasksType = initialState, action: TasksActio
         default :
             return state;
     }
-}
+}*/
 
 // ACTION
+/*
 export const updateTasksAC = (todolistID1: string, id: string, title: string) => {
     return {
         type: 'UPDATE-TASKS',
@@ -163,6 +203,7 @@ export const setTasksAC = (tasks: Array<TaskType>, todolistId: string): SetTasks
         todolistId
     }
 }
+*/
 
 
 // THUNK
@@ -173,17 +214,17 @@ enum ResultCode {
 }
 
 export const getTasksTC = (todolistId: string) => (dispatch: Dispatch) => {
-    dispatch(setStatusApp('loading'))
+    dispatch(setStatusApp({status: 'loading'}))
     todolistApi.getTasks(todolistId)
         .then((res) => {
             const tasks = res.data.items
-            const action = setTasksAC(tasks, todolistId)
+            const action = setTasksAC({tasks, todolistId})
             dispatch(action)
         })
         .catch((rej: AxiosError) => {
             handleServerNetworkError(dispatch, rej.message)
         })
-        .finally(() => dispatch(setStatusApp('idle')))
+        .finally(() => dispatch(setStatusApp({status: 'idle'})))
 }
 
 
@@ -192,7 +233,7 @@ export const removeTask = (todolistId: string, taskId: string) => (dispatch: Dis
     todolistApi.deleteTask(todolistId, taskId)
         .then((res) => {
             if (res.data.resultCode === ResultCode.success) {
-                dispatch(removeTasksAC(todolistId, taskId))
+                dispatch(removeTasksAC({todolistID1:todolistId, removeID:taskId}))
             }
         })
         .catch((rej: AxiosError) => {
@@ -204,12 +245,12 @@ export const removeTask = (todolistId: string, taskId: string) => (dispatch: Dis
 }
 
 export const addTask = (payload: { todolistId: string, title: string }) => (dispatch: Dispatch) => {
-    dispatch(setStatusApp('loading'))
+    dispatch(setStatusApp({status: 'loading'}))
     todolistApi.createTask(payload.todolistId, payload.title)
         .then((res) => {
             if (res.data.resultCode === ResultCode.success) {
                 let task = res.data.data.item
-                dispatch(addTasksAC(task))
+                dispatch(addTasksAC({task}))
             } else {
                 handleServerAppError<{ item: TaskType }>(dispatch, res.data)
             }
@@ -217,7 +258,7 @@ export const addTask = (payload: { todolistId: string, title: string }) => (disp
         .catch((rej: AxiosError) => {
             handleServerNetworkError(dispatch, rej.message)
         })
-        .finally(() => dispatch(setStatusApp('idle')))
+        .finally(() => dispatch(setStatusApp({status: 'idle'})))
 }
 
 export const changeStatusOrTitleTask = (todolistId: string, taskId: string, payload: { status?: TaskStatuses, title?: string }) =>
@@ -249,7 +290,7 @@ export const changeStatusOrTitleTask = (todolistId: string, taskId: string, payl
                 .then((res) => {
                     if (res.data.resultCode === ResultCode.success) {
                         let newTask = res.data.data.item
-                        dispatch(changeStatusTasksAC(newTask))
+                        dispatch(changeStatusTasksAC({task: newTask}))
                     } else {
                         handleServerAppError(dispatch, res.data)
                     }

@@ -4,20 +4,20 @@ import {CommonResponseType} from "../api/todolist-api";
 import {changeTodolistEntityStatusAC} from "../state/todolists-reducer";
 
 export const handleServerNetworkError = (dispatch: Dispatch, message: string) => {
-    dispatch(setErrorApp(message))
+    dispatch(setErrorApp({isError:message}))
 }
 
 
 export const handleServerAppError = <T>(dispatch: Dispatch, data: CommonResponseType<T>) => {
     if (data.messages.length) {
-        dispatch(setErrorApp(data.messages[0]))
+        dispatch(setErrorApp({isError: data.messages[0]}))
     } else {
-        dispatch(setErrorApp('Обратитесь к администратору сайта'))
+        dispatch(setErrorApp({isError: 'Обратитесь к администратору сайта'}))
     }
 }
 
 
 export const handleChangeTitleOrStatusTask = (dispatch: Dispatch, statusAndEntityStatus: RequestStatusType, todolistId: string = '') => {
-    dispatch(setStatusApp(statusAndEntityStatus))
-    dispatch(changeTodolistEntityStatusAC(statusAndEntityStatus, todolistId))
+    dispatch(setStatusApp({status: statusAndEntityStatus}))
+    dispatch(changeTodolistEntityStatusAC({entityStatus: statusAndEntityStatus, todoId: todolistId}))
 }

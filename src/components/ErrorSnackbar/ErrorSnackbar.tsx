@@ -20,7 +20,7 @@ export function ErrorSnackbar() {
         if (reason === 'clickaway') {
             return;
         }
-        dispatch(setErrorApp(null))
+        dispatch(setErrorApp({isError: null}))
     };
 // @ts-ignore
     return (
